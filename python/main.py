@@ -133,12 +133,13 @@ while(cap.isOpened()):
 
     # Draw Overlay
     if config['text_overlay']:
+        cv2.rectangle(frame_out, (1, 5), (280, 90),(255,255,255), 85) 
         str_on_frame = "Frames: %d/%d" % (video_cur_frame, video_info['num_of_frames'])
         cv2.putText(frame_out, str_on_frame, (5,30), cv2.FONT_HERSHEY_SCRIPT_COMPLEX,
                     0.7, (0,128,255), 2, cv2.LINE_AA)
         str_on_frame = "Vagas: %d Ocupadas: %d" % (spot, occupied)
-        cv2.putText(frame_out, str_on_frame, (250,30), cv2.FONT_HERSHEY_SCRIPT_COMPLEX,
-                            0.7, (0,0,255), 2, cv2.LINE_AA)
+        cv2.putText(frame_out, str_on_frame, (5,90), cv2.FONT_HERSHEY_SCRIPT_COMPLEX,
+                            0.7, (0,128,255), 2, cv2.LINE_AA)
 
             
     # write the output frame

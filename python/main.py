@@ -1,8 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Wed Dec 30 13:21:17 2015
-@author: elad
-"""
 
 import yaml
 import numpy as np
@@ -26,7 +22,7 @@ config = {'save_video': True,
 
 # Set capture device or file
 cap = cv2.VideoCapture(fn)
-print cap.get(5) 
+# print cap.get(5) 
 video_info = {'fps':    cap.get(cv2.CAP_PROP_FPS),
               'width':  int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)),
               'height': int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)),
@@ -99,7 +95,7 @@ while(cap.isOpened()):
             # delta = np.mean(np.abs(laplacian * parking_mask[ind]))
             # print np.std(roi_gray), np.mean(roi_gray)
             # status = delta < config['park_laplacian_th']
-            status = np.std(roi_gray) < 22 and np.mean(roi_gray) > 57
+            status = np.std(roi_gray) < 22 and np.mean(roi_gray) > 60
             # If detected a change in parking status, save the current time
             if status != parking_status[ind] and parking_buffer[ind]==None:
                 parking_buffer[ind] = video_cur_pos

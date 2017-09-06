@@ -14,7 +14,7 @@ fn = r"../datasets/parkinglot_1_480p.mp4"
 # fn_yaml = r"../datasets/CUHKSquare.yml"
 fn_yaml = r"../datasets/parking2.yml"
 fn_out = r"../datasets/output.avi"
-config = {'save_video': False,
+config = {'save_video': True,
           'text_overlay': True,
           'parking_overlay': True,
           'parking_id_overlay': False,
@@ -89,12 +89,17 @@ while(cap.isOpened()):
         for ind, park in enumerate(parking_data):
             points = np.array(park['points'])
             rect = parking_bounding_rects[ind]
-            roi_gray = frame_gray[rect[1]:(rect[1]+rect[3]), rect[0]:(rect[0]+rect[2])] # crop roi for faster calculation            
-            laplacian = cv2.Laplacian(roi_gray, cv2.CV_64F)
+            roi_gray = frame_gray[rect[1]:(rect[1]+rect[3]), rect[0]:(rect[0]+rect[2])] # crop roi for faster calculation   
+            # print np.std(roi_gray)
+
+
+            # laplacian = cv2.Laplacian(roi_gray, cv2.CV_64F)
             points[:,0] = points[:,0] - rect[0] # shift contour to roi
             points[:,1] = points[:,1] - rect[1]
-            delta = np.mean(np.abs(laplacian * parking_mask[ind]))
-            status = delta < config['park_laplacian_th']
+            # delta = np.mean(np.abs(laplacian * parking_mask[ind]))
+            # print np.std(roi_gray), np.mean(roi_gray)
+            # status = delta < config['park_laplacian_th']
+            status = np.std(roi_gray) < 22 and np.mean(roi_gray) > 57
             # If detected a change in parking status, save the current time
             if status != parking_status[ind] and parking_buffer[ind]==None:
                 parking_buffer[ind] = video_cur_pos
@@ -148,7 +153,7 @@ while(cap.isOpened()):
             out.write(frame_out)    
     
     # Display video
-    cv2.imshow('frame', frame_out)
+    cv2.imshow('Detecção de Vagas de Estacionamento', frame_out)
     cv2.waitKey(40)
     # cv2.imshow('background mask', bw)
     k = cv2.waitKey(1)

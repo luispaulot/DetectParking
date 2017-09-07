@@ -6,18 +6,16 @@ import cv2
 
 # fn = r"../datasets/cut.mpg"
 fn = r"../datasets/parkinglot_1_480p.mp4"
-# fn = r"C:\Users\elad\Documents\code\illumasense\datasets\street_high_360p.mp4"
 # fn_yaml = r"../datasets/CUHKSquare.yml"
 fn_yaml = r"../datasets/parking2.yml"
 fn_out = r"../datasets/output.avi"
-config = {'save_video': True,
+config = {'save_video': False,
           'text_overlay': True,
           'parking_overlay': True,
           'parking_id_overlay': False,
           'parking_detection': True,
           'min_area_motion_contour': 60,
-          'park_laplacian_th': 1.7,
-          'park_sec_to_wait': 1,
+          'park_sec_to_wait': 3,
           'start_frame': 0} #35000
 
 # Set capture device or file
@@ -32,7 +30,7 @@ cap.set(cv2.CAP_PROP_POS_FRAMES, config['start_frame']) # jump to frame
 
 # Define the codec and create VideoWriter object
 if config['save_video']:
-    fourcc = cv2.VideoWriter_fourcc('C','R','A','M') # options: ('P','I','M','1'), ('D','I','V','X'), ('M','J','P','G'), ('X','V','I','D')
+    fourcc = cv2.VideoWriter_fourcc('D','I','V','X')# options: ('P','I','M','1'), ('D','I','V','X'), ('M','J','P','G'), ('X','V','I','D')
     out = cv2.VideoWriter(fn_out, -1, 25.0, #video_info['fps'], 
                           (video_info['width'], video_info['height']))
 
@@ -57,11 +55,9 @@ for park in parking_data:
     mask = mask==255
     parking_mask.append(mask)
 
-kernel_erode = cv2.getStructuringElement(cv2.MORPH_RECT,(3,3)) # morphological kernel
-# kernel_dilate = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(13,13)) # morphological kernel
-kernel_dilate = cv2.getStructuringElement(cv2.MORPH_RECT,(5,19))
 parking_status = [False]*len(parking_data)
 parking_buffer = [None]*len(parking_data)
+
 
 while(cap.isOpened()):   
     spot = 0
@@ -88,14 +84,10 @@ while(cap.isOpened()):
             roi_gray = frame_gray[rect[1]:(rect[1]+rect[3]), rect[0]:(rect[0]+rect[2])] # crop roi for faster calculation   
             # print np.std(roi_gray)
 
-
-            # laplacian = cv2.Laplacian(roi_gray, cv2.CV_64F)
             points[:,0] = points[:,0] - rect[0] # shift contour to roi
             points[:,1] = points[:,1] - rect[1]
-            # delta = np.mean(np.abs(laplacian * parking_mask[ind]))
             # print np.std(roi_gray), np.mean(roi_gray)
-            # status = delta < config['park_laplacian_th']
-            status = np.std(roi_gray) < 22 and np.mean(roi_gray) > 60
+            status = np.std(roi_gray) < 22 and np.mean(roi_gray) > 53
             # If detected a change in parking status, save the current time
             if status != parking_status[ind] and parking_buffer[ind]==None:
                 parking_buffer[ind] = video_cur_pos
@@ -108,7 +100,6 @@ while(cap.isOpened()):
             elif status == parking_status[ind] and parking_buffer[ind]!=None:
                 #if video_cur_pos - parking_buffer[ind] > config['park_sec_to_wait']:
                 parking_buffer[ind] = None                    
-            # print("#%d: %.2f" % (ind, delta))
             # print(parking_status)
    
     if config['parking_overlay']:                    

@@ -129,7 +129,7 @@ while(cap.isOpened()):
         str_on_frame = "Frames: %d/%d" % (video_cur_frame, video_info['num_of_frames'])
         cv2.putText(frame_out, str_on_frame, (5,30), cv2.FONT_HERSHEY_SCRIPT_COMPLEX,
                     0.7, (0,128,255), 2, cv2.LINE_AA)
-        str_on_frame = "Vagas: %d Ocupadas: %d" % (spot, occupied)
+        str_on_frame = "Spot: %d Occupied: %d" % (spot, occupied)
         cv2.putText(frame_out, str_on_frame, (5,90), cv2.FONT_HERSHEY_SCRIPT_COMPLEX,
                             0.7, (0,128,255), 2, cv2.LINE_AA)
 
